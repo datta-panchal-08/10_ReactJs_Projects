@@ -10,6 +10,7 @@ const App = () => {
   const [loading, setLoading ] = useState(false);
   const [error , setError] = useState(null);
   const [filteredData , setFilteredData] = useState(null);
+  const [selected, setSelected] =  useState("all");
 
 
   useEffect(()=>{
@@ -44,6 +45,44 @@ const App = () => {
     setFilteredData(filter);
    }
 
+   const filterFood = (type) =>{
+        if(type  === "all")
+        {
+          setFilteredData(data)
+          setSelected("all");
+          return;
+        }
+        const filter = data?.filter((food)=>{
+           return food.type.toLowerCase().includes(type.toLowerCase())
+      });
+      setFilteredData(filter);
+      setSelected(type);
+   }
+
+   const filterBtns = [
+    {
+      name:"All",
+      type : "all",
+
+    },
+    {
+      name:"Lunch",
+      type : "lunch",
+
+    }
+    ,
+    {
+      name:"Breakfast",
+      type : "breakfast",
+
+    },
+    {
+      name:"Dinner",
+      type : "dinner",
+
+    }
+   ]
+
   return (
     <>
     <Container>
@@ -57,10 +96,9 @@ const App = () => {
        </TopContainer>
 
        <FilteredContainer>
-        <Button>All</Button>
-        <Button>Breakfast</Button>
-        <Button>Lunch</Button>
-        <Button>Dinner</Button>
+       {
+        filterBtns.map((value)=>( <Button isSelected= {selected === value.type}  onClick={()=> filterFood(value.type)} key={value.name}>{value.name}</Button>)
+       )}
        </FilteredContainer>    
     </Container>
     <SerachResult data = {filteredData}/>  
@@ -80,6 +118,11 @@ const TopContainer = styled.section`
   justify-content : space-between;
   align-items : center;
   padding : 16px;
+
+  @media(0< width < 600px){
+    flex-direction: column;
+    min-height: 120px;
+  }
   
   .search{
     input{
@@ -90,8 +133,12 @@ const TopContainer = styled.section`
       font-size: 16px;
       border-radius : 5px;
       padding : 0 10px;
+      &::placeholder{
+        color: white;
+      }
     }
   }
+
 `;
 
 const FilteredContainer = styled.section`
@@ -102,7 +149,8 @@ const FilteredContainer = styled.section`
 `;
 
 export const Button = styled.button`
-   background-color : #ff4343;
+   background-color :${({isSelected})=>(isSelected ? "#2ea00c":"#ff4343")};
+   outline: 1px solid ${({isSelected})=>(isSelected ? "white":"#ff4343")};
    border-radius : 5px;
    padding:6px 12px;
    border:none;
@@ -110,7 +158,7 @@ export const Button = styled.button`
    cursor: pointer;
 
    &:hover{
-     background-color: #2ea00c;
+     background-color:#c71212;
 
    }
 `;
